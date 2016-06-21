@@ -1,0 +1,19 @@
+#!/bin/sh
+
+# Name used for the 'tmux' session
+pinentry_session_name="pinentry_curses"
+
+# Create a unique session with a shell that does nothing so that the
+# 'pinentry-curses' program will be able to display it's ncurses interface and
+# catch the keyboard input.
+tmux new-session \
+    -d -P -s"${pinentry_session_name}" \
+    "stty -echo; while true; do sleep 2; done" &> /dev/null
+
+# Get the pseudo-terminal file path ...
+pinentry_tty=$(tmux list-window -F '#{session_name}:#{pane_tty}' | \
+    sed -En "s/^${pinentry_session_name}:(.*)$/\1/p")
+
+# Execute 'pinentry-curses' inside the 'tmux' pseudo-terminal
+exec /usr/bin/pinentry-curses "$@" \
+    --ttyname ${pinentry_tty}
