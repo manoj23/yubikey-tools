@@ -97,6 +97,9 @@ function yubikey_set_pgp_retries() {
 # Prepare the GnuPG agent
 function gpg_setup_keyring() {
 
+    # Generate enough entropy for keys generation
+    sudo rngd -r /dev/urandom
+
     # Kill all the 'gpg-agent' daemons
     killall gpg-agent
 
