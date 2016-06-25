@@ -60,11 +60,11 @@ yubikey_backup_slot() {
 
 
 # Restore the Yubikey to it's default state.
+yubikey_reset_piv_applet
+yubikey_reset_pgp_applet
 yubikey_reset_slots
 yubikey_backup_slot 1 slot1_defaults.config
 yubikey_backup_slot 1 slot2_defaults.config
-yubikey_reset_pgp_applet
-yubikey_reset_piv_applet
 
 
 # Get the most from the Yubikey NEO.
