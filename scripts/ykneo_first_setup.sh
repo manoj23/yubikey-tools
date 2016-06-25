@@ -23,8 +23,8 @@ function yubikey_reset_pgp_applet() {
 # Reset the Yubikey PIV applet
 # WARNING: This will reset the PIN/PUK codes!
 function yubikey_reset_piv_applet() {
-    local invalid_puk = 99999
-    local invalid_pin = 9999
+    local invalid_puk=999999
+    local invalid_pin=9999
 
     # Enter the PIN incorrectly three times, then enter the PUK incorrectly
     # three times, and finally reset the applet using the yubico-piv-tool.
@@ -47,9 +47,9 @@ function yubikey_reset_slots() {
 }
 
 # Backup slot configuration into a file.
-yubikey_backup_slot_configuration() {
-    local slot = $1
-    local filename = $2
+yubikey_backup_slot() {
+    local slot=$1
+    local filename=$2
 
     # Ensure we are given a valid slot number.
     [[ "${slot}" =~ ^(1|2)$ ]] || return -1
@@ -72,9 +72,9 @@ function yubikey_enable_all_modes() {
 
     # Timeout (in seconds) for the YubiKey to wait on  button  press  for
     # challenge response (default: 15)
-    local challenge_timeout = 15
+    local challenge_timeout=15
 
-    local autoeject_timeout = 
+    local autoeject_timeout=
 
     # Enable OTP/U2F/CCID composite device (0x06),
     # and set MODE_FLAG_EJECT flag (0x80).
