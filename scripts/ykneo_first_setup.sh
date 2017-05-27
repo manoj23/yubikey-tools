@@ -3,7 +3,6 @@
 # Reset the Yubikey OpenPGP applet
 # WARNING: This will reset the PIN codes!
 function yubikey_reset_pgp_applet() {
-
     # We provide a wrong user and then admin PIN to the verify mechanism to
     # lock the key, then we send the command to terminate and reset the applet.
     gpg-connect-agent --hex \
@@ -40,7 +39,6 @@ function yubikey_reset_piv_applet() {
 # Reset the slots configuration
 # WARNING: You will loose the slot's content!
 function yubikey_reset_slots() {
-
     # Reset the configuration in slots 1 and 2
     ykpersonalize -y -1 -z
     ykpersonalize -y -2 -z
@@ -58,22 +56,11 @@ yubikey_backup_slot() {
     ykpersonalize -${slot} -s${filename}
 }
 
-
-# Restore the Yubikey to it's default state.
-yubikey_reset_piv_applet
-yubikey_reset_pgp_applet
-yubikey_reset_slots
-yubikey_backup_slot 1 slot1_defaults.config
-yubikey_backup_slot 1 slot2_defaults.config
-
-
 # Get the most from the Yubikey NEO.
 function yubikey_enable_all_modes() {
-
     # Timeout (in seconds) for the YubiKey to wait on  button  press  for
     # challenge response (default: 15)
     local challenge_timeout=15
-
     local autoeject_timeout=
 
     # Enable OTP/U2F/CCID composite device (0x06),
@@ -81,19 +68,41 @@ function yubikey_enable_all_modes() {
     ykpersonalize -y -m86:${challenge_timeout}:${autoeject_timeout}
 }
 
-
-# Configure the Yubikey as wished.
-yubikey_enable_all_modes
-
-
-exit 1
-
-
 # Reset the OAUTH applet (as configured in one of the two slots.)
 function yubikey_reset_oauth_applet() {
-
     # Reset the OAuth applet using OpenSC and an APDU command.
     opensc-tool -s 00a4040008a000000527210101 -s 0004dead
 }
 
-yubikey_reset_oauth_applet
+function main() {
+    REQUIRED_PROGRAMS="gpg-connect-agent \
+                       opensc-tool \
+                       ykpersonalize \
+                       yubico-piv-tool"
+
+    if [ ! -e /run/pcscd/pcscd.comm ]; then
+         echo "pcscd is not running, Bye!"
+         exit 1
+    fi
+
+    for prog in $REQUIRED_PROGRAMS; do
+         if ! command -v $prog >/dev/null 2>&1; then
+             echo "$prog is not installed, Bye!"
+             exit 1
+         fi
+    done
+
+    # Restore the Yubikey to it's default state.
+    yubikey_reset_piv_applet
+    yubikey_reset_pgp_applet
+    yubikey_reset_slots
+    yubikey_backup_slot 1 slot1_defaults.config
+    yubikey_backup_slot 1 slot2_defaults.config
+
+    # Configure the Yubikey as wished.
+    yubikey_enable_all_modes
+
+    exit 0
+}
+
+main $@

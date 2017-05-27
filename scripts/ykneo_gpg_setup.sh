@@ -452,18 +452,43 @@ function gpg_backup_to_luks() {
 
 # WARNING: Please keep the call order, PIN requested are hard coded in the functions
 #          and the PIN retries reset sequence should be called before setting new PINs.
+function main() {
+    REQUIRED_PROGRAMS="awk \
+                       convert \
+                       cryptsetup \
+                       gpg-agent \
+                       gpg-connect-agent \
+                       gpg2 \
+                       md5sum \
+                       mkfs.ext4 \
+                       qrencode \
+                       rngd \
+                       shred \
+                       split \
+                       ssh-add \
+                       zbarimg"
 
-gpg_setup_keyring
+    for prog in $REQUIRED_PROGRAMS; do
+         if ! command -v $prog >/dev/null 2>&1; then
+             echo "$prog is not installed, Bye!"
+             exit 1
+         fi
+    done
 
-yubikey_reset_pgp_applet
+    gpg_setup_keyring
 
-gpg_gen_keys
-gpg_backup_keys
+    yubikey_reset_pgp_applet
 
-yubikey_import_pgp_keys
-yubikey_set_pgp_retries ${default_admin_pin}
-yubikey_configure_pgp_applet
+    gpg_gen_keys
+    gpg_backup_keys
 
-gpg_backup_ssh_key
-gpg_generate_backup_pdf
-gpg_backup_to_luks
+    yubikey_import_pgp_keys
+    yubikey_set_pgp_retries ${default_admin_pin}
+    yubikey_configure_pgp_applet
+
+    gpg_backup_ssh_key
+    gpg_generate_backup_pdf
+    gpg_backup_to_luks
+}
+
+main $@
