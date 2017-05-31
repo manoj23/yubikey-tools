@@ -97,7 +97,7 @@ function main() {
     yubikey_reset_pgp_applet
     yubikey_reset_slots
     yubikey_backup_slot 1 slot1_defaults.config
-    yubikey_backup_slot 1 slot2_defaults.config
+    yubikey_backup_slot 2 slot2_defaults.config
 
     # Configure the Yubikey as wished.
     yubikey_enable_all_modes
