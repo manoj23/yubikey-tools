@@ -54,6 +54,8 @@ yubikey_backup_slot() {
 
     # Backup the configuration of the given slot.
     ykpersonalize -${slot} -s${filename}
+
+    echo "${FUNCNAME[0]}: slot ${slot} saved in ${filename}"
 }
 
 # Get the most from the Yubikey NEO.
