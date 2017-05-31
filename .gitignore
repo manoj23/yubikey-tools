@@ -1,2 +1,6 @@
 slot1_defaults.config
 slot2_defaults.config
+*.luks
+*.luks.md5
+export/
+keyring/
