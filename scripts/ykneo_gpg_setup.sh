@@ -475,6 +475,11 @@ function main() {
          fi
     done
 
+    if [ -z $luks_passphrase ]; then
+        echo "\$luks_passphrase is empty, Bye!"
+        exit 1
+    fi
+
     gpg_setup_keyring
 
     yubikey_reset_pgp_applet
